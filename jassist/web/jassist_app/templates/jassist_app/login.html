@@ -1,0 +1,45 @@
+{% extends "jassist_app/base.html" %}
+{% load socialaccount %}
+
+{% block title %}Login{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <h1 class="h3"><i class="fas fa-sign-in-alt me-2"></i>Login</h1>
+                    <p class="text-muted">Sign in with your Google account</p>
+                </div>
+                
+                {% if user.is_authenticated %}
+                    <div class="alert alert-info">
+                        <p class="mb-0">Welcome, {{ user.username }}! You are already logged in.</p>
+                    </div>
+                    <div class="d-grid gap-2 mt-4">
+                        <a href="{% url 'success' %}" class="btn btn-primary">Go to Success Page</a>
+                        <a href="{% url 'account_logout' %}" class="btn btn-outline-secondary">Log out</a>
+                    </div>
+                {% else %}
+                    <div class="text-center mb-3">
+                        <p>Please log in using your Google Account to continue.</p>
+                    </div>
+                    
+                    <div class="d-grid gap-2">
+                        <a href="/accounts/google/login/" class="btn btn-lg btn-outline-primary">
+                            <i class="fab fa-google me-2"></i>Sign in with Google
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <p class="text-muted small">
+                By logging in, you agree to allow the app to access your Google account.
+            </p>
+        </div>
+    </div>
+</div>
+{% endblock %} 

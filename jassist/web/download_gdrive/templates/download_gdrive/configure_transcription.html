@@ -1,0 +1,87 @@
+{% extends 'jassist_app/base.html' %}
+{% load crispy_forms_tags %}
+
+{% block title %}Configure Transcription - JAssist{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-mic-fill me-2"></i>Configure Transcription Settings
+                    </h5>
+                </div>
+                
+                <div class="card-body">
+                    <div class="alert alert-info">
+                        <h6 class="alert-heading"><i class="bi bi-info-circle-fill me-2"></i>About Transcription</h6>
+                        <p class="mb-0">
+                            This feature uses OpenAI's API to automatically transcribe audio files downloaded from your Google Drive.
+                            You need to provide your own OpenAI API key to use this feature.
+                        </p>
+                    </div>
+                    
+                    <form method="post" class="mt-4">
+                        {% csrf_token %}
+                        
+                        <div class="mb-4">
+                            <h6 class="border-bottom pb-2">Your Transcription Settings</h6>
+                            <p class="small text-muted">
+                                You can customize the language setting. All other settings are managed system-wide by administrators.
+                            </p>
+                            {{ form|crispy }}
+                        </div>
+                        
+                        <div class="mb-4">
+                            <h6 class="border-bottom pb-2">System Settings (Read-only)</h6>
+                            <p class="small text-muted">These settings are configured by the system administrator.</p>
+                            
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <dl class="row">
+                                        <dt class="col-sm-5">Default Model</dt>
+                                        <dd class="col-sm-7">{{ global_config.default_model }}</dd>
+                                        
+                                        <dt class="col-sm-5">Response Format</dt>
+                                        <dd class="col-sm-7">{{ global_config.response_format }}</dd>
+                                    </dl>
+                                </div>
+                                <div class="col-md-6">
+                                    <dl class="row">
+                                        <dt class="col-sm-5">Max Duration</dt>
+                                        <dd class="col-sm-7">
+                                            {% with max_duration=global_config.cost_management.max_audio_duration_seconds|default:300 %}
+                                                {{ max_duration }} seconds
+                                            {% endwith %}
+                                        </dd>
+                                        
+                                        <dt class="col-sm-5">Default Prompt</dt>
+                                        <dd class="col-sm-7">
+                                            {% if global_config.default_prompt %}
+                                                <span class="text-muted font-italic">{{ global_config.default_prompt|truncatechars:50 }}</span>
+                                            {% else %}
+                                                <span class="text-muted">None</span>
+                                            {% endif %}
+                                        </dd>
+                                    </dl>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <a href="{% url 'download_gdrive:dashboard' %}" class="btn btn-outline-secondary">
+                                <i class="bi bi-arrow-left me-2"></i>Back to Dashboard
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-save me-2"></i>Save Settings
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

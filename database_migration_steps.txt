@@ -1,0 +1,22 @@
+# Database Migration Steps
+
+## Initial Setup
+# First run these commands to initialize the auth and core Django tables
+python manage.py migrate auth
+python manage.py migrate sites
+python manage.py migrate
+
+
+
+## Creating admin user (optional)
+# Create a superuser for accessing the Django admin interface
+python manage.py createsuperuser
+
+## Set up Google Authentication
+# Run the custom management command to set up Google OAuth
+python manage.py fix_google_auth
+
+## Start the development server
+python manage.py runserver
+
+

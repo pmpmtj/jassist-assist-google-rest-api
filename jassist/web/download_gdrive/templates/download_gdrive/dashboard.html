@@ -1,0 +1,253 @@
+{% extends "jassist_app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Google Drive Downloads - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Google Drive Downloads & Transcription</h1>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row mb-4">
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-cloud-download me-2"></i>Drive Download Configuration
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <h6 class="border-bottom pb-2">Target Folders:</h6>
+                    {% if user_config.target_folders %}
+                    <ul class="list-group mb-3">
+                        {% for folder in user_config.target_folders %}
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            {{ folder }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                    {% else %}
+                    <p class="text-muted">No folders configured.</p>
+                    {% endif %}
+                    
+                    <h6 class="border-bottom pb-2">Status:</h6>
+                    <div class="mb-3">
+                        <span class="fw-bold">Active: </span>
+                        {% if user_config.is_active %}
+                        <span class="badge bg-success">Enabled</span>
+                        {% else %}
+                        <span class="badge bg-danger">Disabled</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-3">
+                        <span class="fw-bold">Last Run: </span>
+                        {% if user_config.last_run %}
+                        {{ user_config.last_run }}
+                        {% else %}
+                        <span class="text-muted">Never</span>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="text-end mt-3">
+                        <a href="{% url 'download_gdrive:configure_drive' %}" class="btn btn-primary">
+                            <i class="bi bi-gear-fill me-2"></i>Configure Drive Downloads
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-mic-fill me-2"></i>Transcription Configuration
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if has_transcription_config %}
+                    <div class="alert alert-info">
+                        <p class="mb-0">
+                            <i class="bi bi-info-circle-fill me-2"></i>Audio files downloaded from Google Drive can be automatically transcribed.
+                        </p>
+                    </div>
+                    
+                    <form method="post" action="{% url 'download_gdrive:toggle_transcription' %}" class="mb-3">
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-sm btn-outline-primary">
+                            <i class="bi bi-toggle-on me-1"></i>Toggle Transcription
+                        </button>
+                    </form>
+                    
+                    {% else %}
+                    <div class="alert alert-warning">
+                        <p class="mb-0">
+                            <i class="bi bi-exclamation-triangle-fill me-2"></i>Transcription is not configured yet. Configure it to automatically transcribe audio files.
+                        </p>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="text-end mt-3">
+                        <a href="{% url 'download_gdrive:configure_transcription' %}" class="btn btn-success">
+                            <i class="bi bi-gear-fill me-2"></i>Configure Transcription
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-cloud-download me-2"></i>Download Actions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <form method="post" action="{% url 'download_gdrive:download_now' %}" id="downloadForm">
+                                {% csrf_token %}
+                                <div class="form-check mb-3">
+                                    <input class="form-check-input" type="checkbox" name="dry_run" value="True" id="dryRunCheck">
+                                    <label class="form-check-label" for="dryRunCheck">
+                                        Dry Run (simulate download without actual changes)
+                                    </label>
+                                </div>
+                                <button type="submit" class="btn btn-primary" id="downloadButton">
+                                    <i class="bi bi-cloud-download me-2"></i>Download Now
+                                </button>
+                            </form>
+                        </div>
+                        
+                        <div class="col-md-6">
+                            <h6 class="border-bottom pb-2">Download Statistics:</h6>
+                            <ul class="list-group">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Total Files Downloaded
+                                    <span class="badge bg-primary rounded-pill">{{ stats.total_files }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    Total Size
+                                    <span class="badge bg-primary rounded-pill">{{ stats.total_size|filesizeformat }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="card-title mb-0">
+                        <i class="bi bi-clock-history me-2"></i>Recent Downloads
+                    </h5>
+                </div>
+                <div class="card-body">
+                    {% if download_history %}
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <thead>
+                                <tr>
+                                    <th>Filename</th>
+                                    <th>Source Folder</th>
+                                    <th>Size</th>
+                                    <th>Downloaded At</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for download in download_history %}
+                                <tr>
+                                    <td>{{ download.filename }}</td>
+                                    <td>{{ download.source_folder }}</td>
+                                    <td>{{ download.file_size|filesizeformat }}</td>
+                                    <td>{{ download.downloaded_at }}</td>
+                                    <td>
+                                        {% if download.deleted_from_drive %}
+                                        <span class="badge bg-warning">Deleted from Drive</span>
+                                        {% else %}
+                                        <span class="badge bg-success">Downloaded</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="text-end mt-3">
+                        <a href="{% url 'download_gdrive:history' %}" class="btn btn-outline-secondary">View All</a>
+                    </div>
+                    {% else %}
+                    <p class="text-muted">No downloads yet.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Loading overlay for download operations -->
+<div id="loadingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:9999;">
+    <div class="d-flex justify-content-center align-items-center h-100">
+        <div class="card p-4">
+            <div class="text-center">
+                <div class="spinner-border text-primary mb-3" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                </div>
+                <h5>Processing Download</h5>
+                <p>Please wait while we download your files...</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const downloadForm = document.getElementById('downloadForm');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+        
+        if (downloadForm) {
+            downloadForm.addEventListener('submit', function(e) {
+                // Show loading overlay
+                loadingOverlay.style.display = 'block';
+                
+                // Ensure the CSRF token is included
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+                
+                // Let the form submit normally with the token
+                // This is just for extra protection against CSRF issues
+                const csrfInput = document.createElement('input');
+                csrfInput.type = 'hidden';
+                csrfInput.name = 'csrfmiddlewaretoken';
+                csrfInput.value = csrftoken;
+                
+                // If the token input was removed somehow, add it back
+                if (!downloadForm.querySelector('[name=csrfmiddlewaretoken]')) {
+                    downloadForm.appendChild(csrfInput);
+                }
+            });
+        }
+    });
+</script>
+{% endblock %} 

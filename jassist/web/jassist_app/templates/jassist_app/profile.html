@@ -1,0 +1,129 @@
+{% extends "jassist_app/base.html" %}
+
+{% block title %}User Profile{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col-12">
+        <h1 class="h3">User Profile</h1>
+        <p class="text-muted">Manage your account and service configurations.</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- User Information Card -->
+    <div class="col-md-4 mb-4">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Account Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <div class="avatar-circle mb-3 mx-auto">
+                        <i class="bi bi-person-circle text-primary" style="font-size: 4rem;"></i>
+                    </div>
+                    <h5>{{ user.username }}</h5>
+                    <p class="text-muted">{{ user.email }}</p>
+                </div>
+                
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Username</span>
+                        <span class="fw-bold">{{ user.username }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Email</span>
+                        <span class="fw-bold">{{ user.email }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Join Date</span>
+                        <span class="fw-bold">{{ user.date_joined|date:"M d, Y" }}</span>
+                    </li>
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <span>Last Login</span>
+                        <span class="fw-bold">{{ user.last_login|date:"M d, Y" }}</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Service Configurations Card -->
+    <div class="col-md-8">
+        <div class="card shadow-sm">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Service Configurations</h5>
+            </div>
+            <div class="card-body">
+                <div class="row row-cols-1 row-cols-md-2 g-4">
+                    <!-- Google Drive Configuration -->
+                    <div class="col">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-3">
+                                    <h5 class="card-title mb-0">Google Drive</h5>
+                                    <i class="bi bi-cloud-download text-primary"></i>
+                                </div>
+                                {% if has_drive_config %}
+                                <div class="badge bg-success mb-3">Configured</div>
+                                {% else %}
+                                <div class="badge bg-warning mb-3">Not Configured</div>
+                                {% endif %}
+                                <p class="card-text small">Configure automatic downloads from your Google Drive.</p>
+                                <div class="alert alert-warning small mt-2 mb-2">
+                                    <i class="bi bi-exclamation-triangle me-1"></i>
+                                    <strong>Important:</strong> You need to select which folders to download from.
+                                </div>
+                                <a href="{% url 'download_gdrive:configure_drive' %}" class="btn btn-success btn-sm">
+                                    <i class="bi bi-gear"></i> Configure
+                                </a>
+                                <a href="{% url 'download_gdrive:dashboard' %}" class="btn btn-outline-secondary btn-sm">
+                                    <i class="bi bi-speedometer2 me-1"></i>Dashboard
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Add more service configurations as they become available -->
+                    <div class="col">
+                        <div class="card h-100 bg-light">
+                            <div class="card-body text-center d-flex flex-column justify-content-center">
+                                <i class="bi bi-plus-circle text-muted" style="font-size: 2rem;"></i>
+                                <p class="mt-2 text-muted">More services coming soon</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Google Integration Card -->
+        <div class="card shadow-sm mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="card-title mb-0">Google Integration</h5>
+            </div>
+            <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                    <i class="fab fa-google text-primary me-3" style="font-size: 2rem;"></i>
+                    <div>
+                        <h6 class="mb-0">Google Account Connected</h6>
+                        <p class="text-muted small mb-0">Your account is linked to Google OAuth</p>
+                    </div>
+                    <div class="ms-auto">
+                        <span class="badge bg-success">Connected</span>
+                    </div>
+                </div>
+                
+                <div class="alert alert-info">
+                    <i class="bi bi-info-circle me-2"></i>
+                    Permissions granted: Google Drive access, Profile information, Email access
+                </div>
+                
+                <a href="{% url 'account_logout' %}" class="btn btn-outline-danger">
+                    <i class="fas fa-sign-out-alt me-1"></i>Disconnect & Logout
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

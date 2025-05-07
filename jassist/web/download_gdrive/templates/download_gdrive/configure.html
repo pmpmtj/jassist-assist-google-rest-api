@@ -1,0 +1,74 @@
+{% extends "jassist_app/base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}Configure Google Drive Downloads{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <h1 class="mb-4">Configure Google Drive Downloads</h1>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-8 mb-4">
+            <div class="card">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Download Configuration</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{% url 'download_gdrive:dashboard' %}" class="btn btn-secondary">Cancel</a>
+                            <button type="submit" class="btn btn-primary">Save Configuration</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Add Folder from Drive</h5>
+                </div>
+                <div class="card-body">
+                    <form method="post" action="{% url 'download_gdrive:add_folder' %}">
+                        {% csrf_token %}
+                        {{ folder_form|crispy }}
+                        <button type="submit" class="btn btn-info mt-3 w-100">Add Folder</button>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h5 class="card-title mb-0">Help</h5>
+                </div>
+                <div class="card-body">
+                    <h6>Target Folders</h6>
+                    <p class="small text-muted">Specify the folders in your Google Drive that you want to download files from. Use "root" to download from your main Drive folder.</p>
+                    
+                    <h6>Download Schedule</h6>
+                    <p class="small text-muted">Optionally set a schedule for automatic downloads. Use cron format (e.g., "0 2 * * *" for daily at 2 AM).</p>
+                    
+                    <h6>Global Settings</h6>
+                    <p class="small text-muted">File extensions, deletion behavior, and timestamp formats are managed by your administrator.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
