@@ -139,3 +139,66 @@ Adjust log levels in Django settings if needed.
 
 - API Documentation: See the Django REST framework API documentation
 - OpenAI Assistant API: [OpenAI Documentation](https://platform.openai.com/docs)
+
+## OpenAI Assistants API JSON Schema
+
+As of May 2025, the OpenAI Assistants API requires a specific structure for JSON response formats. When creating or updating assistants:
+
+### Required JSON Schema Format
+
+```json
+{
+  "type": "json_schema",
+  "json_schema": {
+    "name": "ResponseName",
+    "schema": {
+      "type": "object",
+      "properties": {
+        // Your properties here
+      },
+      "required": []
+    }
+  }
+}
+```
+
+### Important Requirements:
+1. The `type` must be `"json_schema"` (not "json" or "json_object")
+2. The `json_schema` object must contain a `name` property
+3. The `json_schema` object must contain a `schema` property that follows standard JSON schema format
+4. All schema definitions must be inside the `schema` property
+
+This differs from the Chat Completions API which uses a simpler `{"type": "json_object"}` format.
+
+### Example in Classification Adapter:
+
+The system uses this structure when creating the classification assistant:
+
+```python
+response_format={
+    "type": "json_schema",
+    "json_schema": {
+        "name": "ClassificationResponse",
+        "schema": {
+            "type": "object",
+            "properties": {
+                "classifications": {
+                    "type": "array",
+                    "items": {
+                        "type": "object",
+                        "properties": {
+                            "text": {"type": "string"},
+                            "category": {"type": "string"},
+                            "confidence": {"type": "number"}
+                        },
+                        "required": ["category"]
+                    }
+                }
+            },
+            "required": ["classifications"]
+        }
+    }
+}
+```
+
+This ensures the assistant returns properly structured classification results that can be reliably parsed by the system.

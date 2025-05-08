@@ -115,6 +115,46 @@ class ClassificationAdapter:
             try:
                 # Verify the assistant exists
                 assistant = self.client.beta.assistants.retrieve(self.config.assistant_id)
+                
+                # Check if the assistant needs an update for the JSON schema
+                needs_update = False
+                if (self.config.default_response_format == "json" and 
+                    hasattr(assistant, 'response_format') and 
+                    getattr(assistant.response_format, 'type', None) != "json_schema"):
+                    logger.info(f"Assistant {assistant.id} needs to be updated with JSON schema")
+                    needs_update = True
+                
+                if needs_update:
+                    # Update the assistant with the new schema
+                    assistant = self.client.beta.assistants.update(
+                        assistant_id=assistant.id,
+                        response_format={
+                            "type": "json_schema",
+                            "json_schema": {
+                                "name": "ClassificationResponse",
+                                "schema": {
+                                    "type": "object",
+                                    "properties": {
+                                        "classifications": {
+                                            "type": "array",
+                                            "items": {
+                                                "type": "object",
+                                                "properties": {
+                                                    "text": {"type": "string"},
+                                                    "category": {"type": "string"},
+                                                    "confidence": {"type": "number"}
+                                                },
+                                                "required": ["category"]
+                                            }
+                                        }
+                                    },
+                                    "required": ["classifications"]
+                                }
+                            }
+                        }
+                    )
+                    logger.info(f"Updated assistant {assistant.id} with new JSON schema")
+                
                 logger.debug(f"Using existing assistant: {assistant.id}")
                 return assistant.id
             except Exception as e:
@@ -140,7 +180,30 @@ class ClassificationAdapter:
                 model=self.config.model,
                 temperature=self.config.temperature,
                 tools=self.config.tools or [{"type": "code_interpreter"}],
-                response_format={"type": self.config.default_response_format}
+                response_format={
+                    "type": "json_schema",
+                    "json_schema": {
+                        "name": "ClassificationResponse",
+                        "schema": {
+                            "type": "object",
+                            "properties": {
+                                "classifications": {
+                                    "type": "array",
+                                    "items": {
+                                        "type": "object",
+                                        "properties": {
+                                            "text": {"type": "string"},
+                                            "category": {"type": "string"},
+                                            "confidence": {"type": "number"}
+                                        },
+                                        "required": ["category"]
+                                    }
+                                }
+                            },
+                            "required": ["classifications"]
+                        }
+                    }
+                } if self.config.default_response_format == "json" else {"type": self.config.default_response_format}
             )
             
             # Save the assistant ID
