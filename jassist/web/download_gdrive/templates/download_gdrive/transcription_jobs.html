@@ -38,6 +38,7 @@
                             <th>Completed</th>
                             <th>Duration</th>
                             <th>Words</th>
+                            <th>Label</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -73,6 +74,11 @@
                                 {% endif %}
                             </td>
                             <td>{{ job.word_count }}</td>
+                            <td>
+                                <span class="badge {% if job.content_label == 'unlabeled' %}bg-secondary{% else %}bg-info{% endif %}">
+                                    {{ job.get_content_label_display }}
+                                </span>
+                            </td>
                             <td>
                                 <a href="{% url 'download_gdrive:transcription_detail' job.id %}" class="btn btn-sm btn-outline-primary" title="View">
                                     <i class="bi bi-eye"></i>

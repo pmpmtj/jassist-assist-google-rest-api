@@ -206,6 +206,16 @@ class TranscriptionJob(models.Model):
         ('canceled', 'Canceled'),
     )
     
+    CONTENT_LABEL_CHOICES = (
+        ('unlabeled', 'Unlabeled'),
+        ('diary', 'Diary'),
+        ('calendar', 'Calendar'),
+        ('meeting', 'Meeting'),
+        ('note', 'Note'),
+        ('todo', 'Todo'),
+        ('other', 'Other'),
+    )
+    
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='transcription_jobs')
     file_id = models.CharField(max_length=255, help_text="Google Drive file ID")
     file_name = models.CharField(max_length=255, null=True, blank=True)
@@ -223,6 +233,8 @@ class TranscriptionJob(models.Model):
     duration_seconds = models.FloatField(default=0)
     transcript_content = models.TextField(null=True, blank=True, help_text="Full transcription content")
     transcript_summary = models.TextField(null=True, blank=True, help_text="Short summary of the transcription")
+    content_label = models.CharField(max_length=30, choices=CONTENT_LABEL_CHOICES, default='unlabeled', 
+                                     help_text="Content category label (diary, calendar, etc.)")
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)

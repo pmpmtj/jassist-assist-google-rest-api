@@ -227,6 +227,7 @@
                                     <th>Status</th>
                                     <th>Created</th>
                                     <th>Words</th>
+                                    <th>Label</th>
                                     <th>Summary</th>
                                     <th>Actions</th>
                                 </tr>
@@ -248,6 +249,11 @@
                                     </td>
                                     <td>{{ job.created_at|date:"Y-m-d H:i" }}</td>
                                     <td>{{ job.word_count }}</td>
+                                    <td>
+                                        <span class="badge {% if job.content_label == 'unlabeled' %}bg-secondary{% else %}bg-info{% endif %}">
+                                            {{ job.get_content_label_display }}
+                                        </span>
+                                    </td>
                                     <td>
                                         {% if job.transcript_summary %}
                                         <small class="text-muted">{{ job.transcript_summary|truncatechars:50 }}</small>

@@ -320,4 +320,30 @@ def transcription_detail(request, job_id):
         'job': job,
     }
     
-    return render(request, 'download_gdrive/transcription_detail.html', context) 
+    return render(request, 'download_gdrive/transcription_detail.html', context)
+
+@login_required
+@require_POST
+def update_label(request, job_id):
+    """
+    Update the content label of a transcription job.
+    """
+    job = get_object_or_404(TranscriptionJob, id=job_id, user=request.user)
+    
+    # Get the content label from the form
+    content_label = request.POST.get('content_label')
+    
+    # Verify that the label is valid (in the choices)
+    valid_labels = [choice[0] for choice in TranscriptionJob.CONTENT_LABEL_CHOICES]
+    
+    if content_label and content_label in valid_labels:
+        # Update the job's content label
+        job.content_label = content_label
+        job.save(update_fields=['content_label', 'updated_at'])
+        
+        messages.success(request, f"Content label updated to '{dict(TranscriptionJob.CONTENT_LABEL_CHOICES)[content_label]}'")
+    else:
+        messages.error(request, "Invalid content label selected")
+    
+    # Redirect back to the transcription detail page
+    return redirect('download_gdrive:transcription_detail', job_id=job_id) 

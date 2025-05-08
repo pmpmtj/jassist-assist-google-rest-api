@@ -25,4 +25,5 @@ urlpatterns = [
     # Transcription operations
     path('transcriptions/', views.transcription_jobs, name='transcription_jobs'),
     path('transcriptions/<int:job_id>/', views.transcription_detail, name='transcription_detail'),
+    path('transcriptions/<int:job_id>/update-label/', views.update_label, name='update_label'),
 ] 

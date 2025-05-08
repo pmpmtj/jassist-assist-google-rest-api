@@ -135,8 +135,8 @@ class UserTranscriptionConfigAdmin(admin.ModelAdmin):
 @admin.register(TranscriptionJob)
 class TranscriptionJobAdmin(admin.ModelAdmin):
     """Admin interface for TranscriptionJob model."""
-    list_display = ('id', 'user', 'file_name', 'status', 'progress', 'word_count', 'created_at', 'completed_at')
-    list_filter = ('status', 'created_at', 'completed_at')
+    list_display = ('id', 'user', 'file_name', 'status', 'progress', 'word_count', 'content_label', 'created_at', 'completed_at')
+    list_filter = ('status', 'created_at', 'completed_at', 'content_label')
     search_fields = ('file_name', 'file_id', 'user__username', 'transcript_content', 'transcript_summary')
     readonly_fields = ('created_at', 'updated_at', 'completed_at')
     fieldsets = (
@@ -148,6 +148,9 @@ class TranscriptionJobAdmin(admin.ModelAdmin):
         }),
         ('Configuration', {
             'fields': ('language', 'model', 'result_format')
+        }),
+        ('Classification', {
+            'fields': ('content_label',)
         }),
         ('Results', {
             'fields': ('result_path', 'word_count', 'duration_seconds', 'transcript_summary', 'transcript_content')
