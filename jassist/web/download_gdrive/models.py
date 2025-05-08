@@ -113,7 +113,7 @@ class TranscriptionGlobalConfig(models.Model):
     Global configuration for audio transcriptions that applies to all users.
     Only editable by administrators.
     """
-    default_model = models.CharField(max_length=100, default="whisper-1")
+    default_model = models.CharField(max_length=100, default="gpt-4o-transcribe")
     response_format = models.CharField(max_length=20, default="json", 
                           choices=[("json", "JSON"), ("text", "Plain Text"), ("srt", "SRT"), ("vtt", "VTT")])
     cost_management = models.JSONField(default=dict, blank=True, 
@@ -138,7 +138,7 @@ class TranscriptionGlobalConfig(models.Model):
         config, created = cls.objects.get_or_create(
             pk=1,
             defaults={
-                'default_model': "whisper-1",
+                'default_model': "gpt-4o-transcribe",
                 'response_format': "json",
                 'cost_management': {
                     'max_audio_duration_seconds': 300,
@@ -213,7 +213,7 @@ class TranscriptionJob(models.Model):
                                        null=True, blank=True, related_name='transcription_jobs')
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     language = models.CharField(max_length=10, default='en-US')
-    model = models.CharField(max_length=100, default='whisper-1')
+    model = models.CharField(max_length=100, default='gpt-4o-transcribe')
     progress = models.IntegerField(default=0, help_text="Progress percentage (0-100)")
     
     # Results

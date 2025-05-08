@@ -53,7 +53,7 @@ class TranscriptionMetricsCollector:
         file_name: str,
         file_size: int,
         duration: Optional[float] = None,
-        model: str = "whisper-1"
+        model: str = "gpt-4o-transcribe"
     ) -> Dict[str, Any]:
         """
         Record the start of a transcription job.
@@ -153,7 +153,7 @@ class TranscriptionMetricsCollector:
         
         return job_data
     
-    def _calculate_cost(self, duration: Optional[float], model: str = "whisper-1") -> Dict[str, Any]:
+    def _calculate_cost(self, duration: Optional[float], model: str = "gpt-4o-transcribe") -> Dict[str, Any]:
         """
         Calculate the estimated cost of a transcription job.
         
@@ -169,11 +169,11 @@ class TranscriptionMetricsCollector:
         
         # Current OpenAI pricing (as of 2023, subject to change)
         pricing = {
-            "whisper-1": 0.006  # $0.006 per minute
+            "gpt-4o-transcribe": 0.006  # $0.006 per minute
         }
         
-        # Default to whisper-1 pricing if model not found
-        per_minute_cost = pricing.get(model, pricing["whisper-1"])
+        # Default to gpt-4o-transcribe pricing if model not found
+        per_minute_cost = pricing.get(model, pricing["gpt-4o-transcribe"])
         
         # Convert seconds to minutes and calculate cost
         duration_minutes = duration / 60.0

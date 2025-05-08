@@ -21,7 +21,7 @@ class Migration(migrations.Migration):
                 ('file_name', models.CharField(blank=True, max_length=255, null=True)),
                 ('status', models.CharField(choices=[('pending', 'Pending'), ('processing', 'Processing'), ('completed', 'Completed'), ('failed', 'Failed'), ('canceled', 'Canceled')], default='pending', max_length=20)),
                 ('language', models.CharField(default='en-US', max_length=10)),
-                ('model', models.CharField(default='whisper-1', max_length=100)),
+                ('model', models.CharField(default='gpt-4o-transcribe', max_length=100)),
                 ('progress', models.IntegerField(default=0, help_text='Progress percentage (0-100)')),
                 ('result_path', models.CharField(blank=True, max_length=500, null=True)),
                 ('result_format', models.CharField(default='json', max_length=20)),

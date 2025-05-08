@@ -137,7 +137,7 @@ response = requests.post(
     json={
         'file_id': 'your-google-drive-file-id',
         'language': 'en',
-        'model': 'whisper-1'
+        'model': 'gpt-4o-transcribe'
     }
 )
 data = response.json()

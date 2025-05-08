@@ -141,7 +141,7 @@ class TranscriptionManager:
                     file_path.name, 
                     validation_result.get("file_size", 0),
                     duration, 
-                    self.config.get("model", {}).get("name", "whisper-1")
+                    self.config.get("model", {}).get("name", "gpt-4o-transcribe")
                 )
             
             # Step 2: Preprocess audio if needed
@@ -164,7 +164,7 @@ class TranscriptionManager:
             # Step 3: Transcribe the file
             # Extract model configuration
             model_config = self.config.get("model", {})
-            model_name = model_config.get("name", "whisper-1")
+            model_name = model_config.get("name", "gpt-4o-transcribe")
             language = model_config.get("language")
             prompt = model_config.get("prompt")
             response_format = self.config.get("response_format", "json")

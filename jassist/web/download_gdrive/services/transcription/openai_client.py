@@ -41,7 +41,7 @@ class OpenAITranscriptionClient:
     def transcribe(
         self, 
         file_path: Path, 
-        model: str = "whisper-1",
+        model: str = "gpt-4o-transcribe",
         language: Optional[str] = None,
         prompt: Optional[str] = None,
         response_format: str = "json"
@@ -51,7 +51,7 @@ class OpenAITranscriptionClient:
         
         Args:
             file_path (Path): Path to the audio file
-            model (str): Model to use (default: whisper-1)
+            model (str): Model to use (default: gpt-4o-transcribe)
             language (Optional[str]): Language code
             prompt (Optional[str]): Transcription prompt
             response_format (str): Response format (json or text)
@@ -192,7 +192,7 @@ class OpenAITranscriptionClient:
             "message": f"OpenAI API error: {error}"
         }
     
-    def estimate_cost(self, duration_seconds: float, model: str = "whisper-1") -> Dict[str, Any]:
+    def estimate_cost(self, duration_seconds: float, model: str = "gpt-4o-transcribe") -> Dict[str, Any]:
         """
         Estimate the cost of a transcription job.
         
@@ -206,11 +206,11 @@ class OpenAITranscriptionClient:
         # Current OpenAI pricing (as of 2023, subject to change)
         # https://openai.com/pricing
         pricing = {
-            "whisper-1": 0.006  # $0.006 per minute
+            "gpt-4o-transcribe": 0.006  # $0.006 per minute
         }
         
-        # Default to whisper-1 pricing if model not found
-        per_minute_cost = pricing.get(model, pricing["whisper-1"])
+        # Default to gpt-4o-transcribe pricing if model not found
+        per_minute_cost = pricing.get(model, pricing["gpt-4o-transcribe"])
         
         # Convert seconds to minutes and calculate cost
         duration_minutes = duration_seconds / 60.0

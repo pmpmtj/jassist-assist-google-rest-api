@@ -17,7 +17,7 @@ class Migration(migrations.Migration):
             name='TranscriptionGlobalConfig',
             fields=[
                 ('id', models.BigAutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('default_model', models.CharField(default='whisper-1', max_length=100)),
+                ('default_model', models.CharField(default='gpt-4o-transcribe', max_length=100)),
                 ('response_format', models.CharField(choices=[('json', 'JSON'), ('text', 'Plain Text'), ('srt', 'SRT'), ('vtt', 'VTT')], default='json', max_length=20)),
                 ('cost_management', models.JSONField(blank=True, default=dict, help_text='Settings for maximum duration and other cost controls')),
                 ('default_prompt', models.TextField(blank=True, help_text='System-wide default prompt for transcription', null=True)),

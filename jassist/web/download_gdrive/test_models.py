@@ -82,6 +82,6 @@ class TranscriptionGlobalConfigTest(TestCase):
     def test_default_config_creation(self):
         """Test that default configuration is created properly."""
         self.assertEqual(TranscriptionGlobalConfig.objects.count(), 1)
-        self.assertEqual(self.config.default_model, "whisper-1")
+        self.assertEqual(self.config.default_model, "gpt-4o-transcribe")
         self.assertEqual(self.config.response_format, "json")
         self.assertIn('max_audio_duration_seconds', self.config.cost_management) 
