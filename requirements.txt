@@ -18,5 +18,5 @@ djangorestframework==3.14.0
 markdown==3.5.1       # For browsable API docs
 django-filter==23.3   # For filtering support
 coreapi==2.3.3        # For API documentation
-
+pyyaml
 # django-debug-toolbar>=5.2.0

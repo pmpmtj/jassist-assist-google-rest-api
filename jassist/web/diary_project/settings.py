@@ -20,6 +20,9 @@ DEBUG = os.getenv('DEBUG', 'True') == 'True'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', '127.0.0.1,localhost').split(',')
 
+# OpenAI API Key
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY', '')
+
 # Application definition
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -44,6 +47,7 @@ INSTALLED_APPS = [
     'jassist.web.jassist_app',
     'jassist.web.download_gdrive',
     'jassist.web.api',
+    'jassist.web.classification',
 ]
 
 SITE_ID = 2
@@ -214,6 +218,12 @@ LOGGING = {
             'filename': BASE_DIR / 'logs' / 'api.log',
             'formatter': 'verbose',
         },
+        'classification_file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': BASE_DIR / 'logs' / 'classification.log',
+            'formatter': 'verbose',
+        },
     },
     'loggers': {
         'django': {
@@ -228,6 +238,11 @@ LOGGING = {
         },
         'api': {
             'handlers': ['console', 'api_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+        'jassist.web.classification': {
+            'handlers': ['console', 'classification_file'],
             'level': 'DEBUG',
             'propagate': True,
         },
