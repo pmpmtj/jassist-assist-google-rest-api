@@ -213,7 +213,7 @@ LOGGING = {
             'formatter': 'verbose',
         },
         'api_file': {
-            'level': 'INFO',
+            'level': 'DEBUG',
             'class': 'logging.FileHandler',
             'filename': BASE_DIR / 'logs' / 'api.log',
             'formatter': 'verbose',
