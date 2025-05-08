@@ -1,0 +1,139 @@
+{% extends "jassist_app/base.html" %}
+
+{% block title %}Transcription Details - JAssist{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Transcription Details</h1>
+        <div>
+            <a href="{% url 'download_gdrive:transcription_jobs' %}" class="btn btn-outline-primary me-2">Back to Jobs</a>
+            <a href="{% url 'download_gdrive:dashboard' %}" class="btn btn-primary">Dashboard</a>
+        </div>
+    </div>
+    
+    {% if messages %}
+    <div class="row mb-4">
+        <div class="col-12">
+            {% for message in messages %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card mb-4">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="card-title mb-0">Job Information</h5>
+                </div>
+                <div class="card-body">
+                    <dl class="row mb-0">
+                        <dt class="col-sm-5">Job ID:</dt>
+                        <dd class="col-sm-7">{{ job.id }}</dd>
+                        
+                        <dt class="col-sm-5">File Name:</dt>
+                        <dd class="col-sm-7">{{ job.file_name }}</dd>
+                        
+                        <dt class="col-sm-5">Status:</dt>
+                        <dd class="col-sm-7">
+                            {% if job.status == 'completed' %}
+                            <span class="badge bg-success">Completed</span>
+                            {% elif job.status == 'processing' %}
+                            <span class="badge bg-warning">Processing</span>
+                            {% elif job.status == 'failed' %}
+                            <span class="badge bg-danger">Failed</span>
+                            {% else %}
+                            <span class="badge bg-secondary">{{ job.status|title }}</span>
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-5">Created:</dt>
+                        <dd class="col-sm-7">{{ job.created_at }}</dd>
+                        
+                        <dt class="col-sm-5">Completed:</dt>
+                        <dd class="col-sm-7">
+                            {% if job.completed_at %}
+                            {{ job.completed_at }}
+                            {% else %}
+                            -
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-5">Duration:</dt>
+                        <dd class="col-sm-7">
+                            {% if job.duration_seconds > 0 %}
+                            {{ job.duration_seconds|floatformat:1 }} seconds
+                            {% else %}
+                            -
+                            {% endif %}
+                        </dd>
+                        
+                        <dt class="col-sm-5">Word Count:</dt>
+                        <dd class="col-sm-7">{{ job.word_count }}</dd>
+                        
+                        <dt class="col-sm-5">Model:</dt>
+                        <dd class="col-sm-7">{{ job.model }}</dd>
+                        
+                        <dt class="col-sm-5">Language:</dt>
+                        <dd class="col-sm-7">{{ job.language }}</dd>
+                    </dl>
+                </div>
+                <div class="card-footer">
+                    {% if job.result_path %}
+                    <a href="{{ job.result_path }}" class="btn btn-outline-success w-100" target="_blank">
+                        <i class="bi bi-file-earmark-text me-2"></i>Open Original File
+                    </a>
+                    {% endif %}
+                </div>
+            </div>
+            
+            {% if job.status == 'failed' and job.error_message %}
+            <div class="card mb-4">
+                <div class="card-header bg-danger text-white">
+                    <h5 class="card-title mb-0">Error Information</h5>
+                </div>
+                <div class="card-body">
+                    <p>{{ job.error_message }}</p>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        
+        <div class="col-md-8">
+            <div class="card mb-4">
+                <div class="card-header bg-info text-white">
+                    <h5 class="card-title mb-0">Transcription Content</h5>
+                </div>
+                <div class="card-body">
+                    {% if job.transcript_summary %}
+                    <div class="alert alert-light border">
+                        <h6 class="alert-heading">Summary:</h6>
+                        <p class="mb-0">{{ job.transcript_summary }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if job.transcript_content %}
+                    <div class="border p-3 bg-light" style="max-height: 500px; overflow-y: auto;">
+                        <pre class="mb-0" style="white-space: pre-wrap;">{{ job.transcript_content }}</pre>
+                    </div>
+                    {% else %}
+                        {% if job.status == 'completed' %}
+                        <div class="alert alert-warning">
+                            <p class="mb-0">Transcription content is not available in the database. Please check the file.</p>
+                        </div>
+                        {% else %}
+                        <div class="alert alert-info">
+                            <p class="mb-0">Transcription content will be available when the job is completed.</p>
+                        </div>
+                        {% endif %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

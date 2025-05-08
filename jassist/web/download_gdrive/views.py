@@ -11,7 +11,7 @@ from django.utils import timezone
 from django.urls import reverse
 from django.db.models import Sum
 import json
-from .models import UserDriveConfig, GlobalDriveConfig, DownloadRecord, UserTranscriptionConfig, TranscriptionGlobalConfig
+from .models import UserDriveConfig, GlobalDriveConfig, DownloadRecord, UserTranscriptionConfig, TranscriptionGlobalConfig, TranscriptionJob
 from .forms import UserDriveConfigForm, GlobalDriveConfigForm, DriveDownloadForm, FolderSelectionForm, UserTranscriptionConfigForm
 from .services.download.download_manager import DownloadManager
 from .gdrive_utils import list_drive_folders
@@ -47,11 +47,19 @@ def dashboard(request):
     # Check if user has transcription config
     has_transcription_config = UserTranscriptionConfig.objects.filter(user=request.user).exists()
     
+    # Get recent transcription jobs if transcription is configured
+    recent_transcriptions = []
+    if has_transcription_config:
+        recent_transcriptions = TranscriptionJob.objects.filter(
+            user=request.user
+        ).order_by('-created_at')[:5]
+    
     context = {
         'user_config': user_config,
         'download_history': download_history,
         'stats': stats,
         'has_transcription_config': has_transcription_config,
+        'recent_transcriptions': recent_transcriptions,
     }
     
     return render(request, 'download_gdrive/dashboard.html', context)
@@ -286,4 +294,30 @@ def remove_folder(request):
     if request.headers.get('X-Requested-With') == 'XMLHttpRequest':
         return JsonResponse({'success': True})
         
-    return redirect('download_gdrive:configure_drive') 
+    return redirect('download_gdrive:configure_drive')
+
+@login_required
+def transcription_jobs(request):
+    """
+    View to list all transcription jobs for the current user.
+    """
+    jobs = TranscriptionJob.objects.filter(user=request.user).order_by('-created_at')
+    
+    context = {
+        'jobs': jobs,
+    }
+    
+    return render(request, 'download_gdrive/transcription_jobs.html', context)
+
+@login_required
+def transcription_detail(request, job_id):
+    """
+    View to display details of a specific transcription job.
+    """
+    job = get_object_or_404(TranscriptionJob, id=job_id, user=request.user)
+    
+    context = {
+        'job': job,
+    }
+    
+    return render(request, 'download_gdrive/transcription_detail.html', context) 

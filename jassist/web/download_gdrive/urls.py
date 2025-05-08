@@ -21,4 +21,8 @@ urlpatterns = [
     # Download operations
     path('download/', views.download_now, name='download_now'),
     path('history/', views.download_history, name='history'),
+    
+    # Transcription operations
+    path('transcriptions/', views.transcription_jobs, name='transcription_jobs'),
+    path('transcriptions/<int:job_id>/', views.transcription_detail, name='transcription_detail'),
 ] 

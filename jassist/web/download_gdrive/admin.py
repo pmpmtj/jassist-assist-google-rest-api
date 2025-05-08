@@ -135,9 +135,9 @@ class UserTranscriptionConfigAdmin(admin.ModelAdmin):
 @admin.register(TranscriptionJob)
 class TranscriptionJobAdmin(admin.ModelAdmin):
     """Admin interface for TranscriptionJob model."""
-    list_display = ('id', 'user', 'file_name', 'status', 'progress', 'created_at', 'completed_at')
+    list_display = ('id', 'user', 'file_name', 'status', 'progress', 'word_count', 'created_at', 'completed_at')
     list_filter = ('status', 'created_at', 'completed_at')
-    search_fields = ('file_name', 'file_id', 'user__username')
+    search_fields = ('file_name', 'file_id', 'user__username', 'transcript_content', 'transcript_summary')
     readonly_fields = ('created_at', 'updated_at', 'completed_at')
     fieldsets = (
         (None, {
@@ -150,7 +150,7 @@ class TranscriptionJobAdmin(admin.ModelAdmin):
             'fields': ('language', 'model', 'result_format')
         }),
         ('Results', {
-            'fields': ('result_path', 'word_count', 'duration_seconds')
+            'fields': ('result_path', 'word_count', 'duration_seconds', 'transcript_summary', 'transcript_content')
         }),
         ('Timestamps', {
             'fields': ('created_at', 'updated_at', 'completed_at')
@@ -160,5 +160,5 @@ class TranscriptionJobAdmin(admin.ModelAdmin):
     def get_readonly_fields(self, request, obj=None):
         if obj and obj.status in ['completed', 'failed', 'canceled']:
             # Make more fields read-only once the job is in a terminal state
-            return self.readonly_fields + ('status', 'progress', 'language', 'model')
+            return self.readonly_fields + ('status', 'progress', 'language', 'model', 'transcript_content', 'transcript_summary')
         return self.readonly_fields 

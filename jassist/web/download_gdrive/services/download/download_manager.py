@@ -327,12 +327,23 @@ class DownloadManager:
             
             # Update the job record with results
             if result and result.get('success', False):
+                transcript_text = result.get('text', '')
+                
+                # Generate summary if we have content
+                summary = ""
+                if transcript_text:
+                    from jassist.web.download_gdrive.services.transcription.result_processor import TranscriptionResultProcessor
+                    processor = TranscriptionResultProcessor(self.transcription_config.get_combined_config())
+                    summary = processor.generate_summary(transcript_text)
+                
                 job.status = 'completed'
                 job.progress = 100
                 job.completed_at = timezone.now()
                 job.result_path = result.get('output_file')
-                job.word_count = len(result.get('text', '').split())
+                job.word_count = len(transcript_text.split()) if transcript_text else 0
                 job.duration_seconds = result.get('duration', 0)
+                job.transcript_content = transcript_text
+                job.transcript_summary = summary
                 job.save()
                 
                 logger.info(f"Transcription completed for {file_path.name}")

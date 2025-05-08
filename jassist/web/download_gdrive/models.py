@@ -221,6 +221,8 @@ class TranscriptionJob(models.Model):
     result_format = models.CharField(max_length=20, default='json')
     word_count = models.IntegerField(default=0)
     duration_seconds = models.FloatField(default=0)
+    transcript_content = models.TextField(null=True, blank=True, help_text="Full transcription content")
+    transcript_summary = models.TextField(null=True, blank=True, help_text="Short summary of the transcription")
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
