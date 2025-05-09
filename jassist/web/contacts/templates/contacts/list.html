@@ -1,0 +1,149 @@
+{% extends 'jassist_app/base.html' %}
+
+{% block title %}My Contacts{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h2><i class="bi bi-person-lines-fill me-2"></i>My Contacts</h2>
+        </div>
+        <div class="col-md-6 text-end">
+            <a href="{% url 'contacts:create' %}" class="btn btn-primary">
+                <i class="bi bi-plus-lg me-1"></i>Add New Contact
+            </a>
+        </div>
+    </div>
+    
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+    
+    {% if categories %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    <div class="d-flex flex-wrap align-items-center">
+                        <span class="me-3 fw-bold">Filter by category:</span>
+                        <a href="{% url 'contacts:list' %}" class="btn {% if not current_category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2 mb-2">
+                            All
+                        </a>
+                        {% for category in categories %}
+                            <a href="{% url 'contacts:list' %}?category={{ category }}" class="btn {% if current_category == category %}btn-primary{% else %}btn-outline-primary{% endif %} me-2 mb-2">
+                                {{ category }}
+                            </a>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    {% if page_obj %}
+        <div class="row">
+            {% for contact in page_obj %}
+                <div class="col-md-6 mb-3">
+                    <div class="card shadow-sm h-100">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="card-title mb-0">{{ contact.name }}</h5>
+                                {% if contact.category %}
+                                    <span class="badge bg-info">{{ contact.category }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="card-text">
+                                {% if contact.email %}
+                                    <p class="mb-1"><i class="bi bi-envelope me-2"></i>{{ contact.email }}</p>
+                                {% endif %}
+                                {% if contact.phone %}
+                                    <p class="mb-1"><i class="bi bi-telephone me-2"></i>{{ contact.phone }}</p>
+                                {% endif %}
+                            </div>
+                        </div>
+                        <div class="card-footer bg-light d-flex justify-content-between">
+                            <a href="{% url 'contacts:detail' contact.id %}" class="btn btn-sm btn-outline-primary">
+                                <i class="bi bi-eye"></i> Details
+                            </a>
+                            <div>
+                                <a href="{% url 'contacts:edit' contact.id %}" class="btn btn-sm btn-outline-secondary me-1">
+                                    <i class="bi bi-pencil-square"></i> Edit
+                                </a>
+                                <a href="{% url 'contacts:delete' contact.id %}" class="btn btn-sm btn-outline-danger">
+                                    <i class="bi bi-trash"></i> Delete
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        
+        {# Pagination #}
+        {% if page_obj.has_other_pages %}
+            <nav aria-label="Page navigation" class="mt-4">
+                <ul class="pagination justify-content-center">
+                    {% if page_obj.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page=1{% if current_category %}&category={{ current_category }}{% endif %}">&laquo; First</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.previous_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}">Previous</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">&laquo; First</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">Previous</span>
+                        </li>
+                    {% endif %}
+                    
+                    {% for i in page_obj.paginator.page_range %}
+                        {% if page_obj.number == i %}
+                            <li class="page-item active">
+                                <span class="page-link">{{ i }}<span class="sr-only">(current)</span></span>
+                            </li>
+                        {% elif i > page_obj.number|add:'-3' and i < page_obj.number|add:'3' %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ i }}{% if current_category %}&category={{ current_category }}{% endif %}">{{ i }}</a>
+                            </li>
+                        {% endif %}
+                    {% endfor %}
+                    
+                    {% if page_obj.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.next_page_number }}{% if current_category %}&category={{ current_category }}{% endif %}">Next</a>
+                        </li>
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ page_obj.paginator.num_pages }}{% if current_category %}&category={{ current_category }}{% endif %}">Last &raquo;</a>
+                        </li>
+                    {% else %}
+                        <li class="page-item disabled">
+                            <span class="page-link">Next</span>
+                        </li>
+                        <li class="page-item disabled">
+                            <span class="page-link">Last &raquo;</span>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+    {% else %}
+        <div class="card">
+            <div class="card-body text-center">
+                <p class="mb-3">You don't have any contacts yet.</p>
+                <a href="{% url 'contacts:create' %}" class="btn btn-primary">
+                    <i class="bi bi-plus-lg me-1"></i>Add Your First Contact
+                </a>
+            </div>
+        </div>
+    {% endif %}
+</div>
+{% endblock %} 

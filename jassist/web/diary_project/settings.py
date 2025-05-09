@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     'jassist.web.api',
     'jassist.web.classification',
     'jassist.web.manual_entries',
+    'jassist.web.contacts',
 ]
 
 SITE_ID = 2

@@ -24,6 +24,22 @@ jassist-assist-google-rest-api/
 │       │   │   └── commands/
 │       │   └── migrations/
 │       │
+│       ├── contacts/            # Contacts management module
+│       │   ├── migrations/      # Database migrations
+│       │   ├── templates/       # UI templates
+│       │   │   └── contacts/
+│       │   │       ├── create.html
+│       │   │       ├── delete.html
+│       │   │       ├── detail.html
+│       │   │       ├── edit.html
+│       │   │       └── list.html
+│       │   ├── admin.py         # Admin interface
+│       │   ├── apps.py          # App configuration
+│       │   ├── forms.py         # Form definitions
+│       │   ├── models.py        # Data models
+│       │   ├── urls.py          # URL routing
+│       │   └── views.py         # View controllers
+│       │
 │       ├── credentials/         # User credentials
 │       │   └── users/
 │       │
@@ -93,6 +109,7 @@ jassist-assist-google-rest-api/
 
 - **API Layer**: RESTful API endpoints with versioning
 - **Classification Module**: For data classification tasks
+- **Contacts Management**: Module for storing and managing user contacts
 - **Download GDrive**: Integration with Google Drive for downloading and processing files
 - **Manual Entries**: Module for user-created text entries with classification
 - **Transcription**: Services for audio/video transcription
