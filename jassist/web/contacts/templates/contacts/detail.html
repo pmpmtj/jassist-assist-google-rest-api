@@ -30,7 +30,11 @@
                 <div class="card-header bg-primary text-white">
                     <div class="d-flex justify-content-between align-items-center">
                         <h3 class="mb-0">
-                            <i class="bi bi-person-circle me-2"></i>{{ contact.name }}
+                            <i class="bi bi-person-circle me-2"></i>
+                            {{ contact.first_name }} {{ contact.last_name }}
+                            {% if contact.alias %}
+                                <small>({{ contact.alias }})</small>
+                            {% endif %}
                             {% if contact.category %}
                                 <span class="badge bg-info ms-2">{{ contact.category }}</span>
                             {% endif %}
@@ -48,7 +52,7 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-6">
-                            <h5 class="border-bottom pb-2 mb-3">Contact Information</h5>
+                            <h5 class="border-bottom pb-2 mb-3">Main Contact Information</h5>
                             
                             {% if contact.email %}
                                 <div class="mb-3">
@@ -68,9 +72,53 @@
                                 </div>
                             {% endif %}
                             
+                            {% if contact.private_email or contact.private_phone %}
+                                <h5 class="border-bottom pb-2 mb-3">Private Contact Information</h5>
+                                
+                                {% if contact.private_email %}
+                                    <div class="mb-3">
+                                        <h6 class="text-muted mb-1"><i class="bi bi-envelope me-2"></i>Private Email</h6>
+                                        <p class="ms-4">
+                                            <a href="mailto:{{ contact.private_email }}">{{ contact.private_email }}</a>
+                                        </p>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if contact.private_phone %}
+                                    <div class="mb-3">
+                                        <h6 class="text-muted mb-1"><i class="bi bi-phone me-2"></i>Private Phone</h6>
+                                        <p class="ms-4">
+                                            <a href="tel:{{ contact.private_phone }}">{{ contact.private_phone }}</a>
+                                        </p>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            
+                            {% if contact.professional_email or contact.professional_phone %}
+                                <h5 class="border-bottom pb-2 mb-3">Professional Contact Information</h5>
+                                
+                                {% if contact.professional_email %}
+                                    <div class="mb-3">
+                                        <h6 class="text-muted mb-1"><i class="bi bi-building me-2"></i>Work Email</h6>
+                                        <p class="ms-4">
+                                            <a href="mailto:{{ contact.professional_email }}">{{ contact.professional_email }}</a>
+                                        </p>
+                                    </div>
+                                {% endif %}
+                                
+                                {% if contact.professional_phone %}
+                                    <div class="mb-3">
+                                        <h6 class="text-muted mb-1"><i class="bi bi-building-fill me-2"></i>Work Phone</h6>
+                                        <p class="ms-4">
+                                            <a href="tel:{{ contact.professional_phone }}">{{ contact.professional_phone }}</a>
+                                        </p>
+                                    </div>
+                                {% endif %}
+                            {% endif %}
+                            
                             {% if contact.address %}
+                                <h5 class="border-bottom pb-2 mb-3">Address</h5>
                                 <div class="mb-3">
-                                    <h6 class="text-muted mb-1"><i class="bi bi-geo-alt me-2"></i>Address</h6>
                                     <p class="ms-4">{{ contact.address|linebreaks }}</p>
                                 </div>
                             {% endif %}

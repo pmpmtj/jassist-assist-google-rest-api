@@ -6,7 +6,7 @@ logger = logging.getLogger(__name__)
 
 class Contact(models.Model):
     """
-    Model for storing user contacts with basic information.
+    Model for storing user contacts with comprehensive information.
     Each contact is associated with a specific user.
     """
     user = models.ForeignKey(
@@ -14,19 +14,55 @@ class Contact(models.Model):
         on_delete=models.CASCADE, 
         related_name='contacts'
     )
-    name = models.CharField(
+    
+    # Basic information
+    first_name = models.CharField(
         max_length=100,
-        help_text="Contact's full name"
+        help_text="Contact's first name"
     )
+    last_name = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Contact's last name"
+    )
+    alias = models.CharField(
+        max_length=100,
+        blank=True,
+        help_text="Nickname or alternative name"
+    )
+    
+    # Personal contact information
     email = models.EmailField(
         blank=True,
-        help_text="Contact's email address"
+        help_text="Main email address"
+    )
+    private_email = models.EmailField(
+        blank=True,
+        help_text="Private/personal email address"
     )
     phone = models.CharField(
         max_length=20, 
         blank=True,
-        help_text="Contact's phone number"
+        help_text="Main phone number"
     )
+    private_phone = models.CharField(
+        max_length=20, 
+        blank=True,
+        help_text="Private/mobile phone number"
+    )
+    
+    # Professional contact information
+    professional_email = models.EmailField(
+        blank=True,
+        help_text="Work/professional email address"
+    )
+    professional_phone = models.CharField(
+        max_length=20, 
+        blank=True,
+        help_text="Work/professional phone number"
+    )
+    
+    # Additional information
     address = models.TextField(
         blank=True,
         help_text="Contact's physical address"
@@ -40,17 +76,27 @@ class Contact(models.Model):
         blank=True,
         help_text="Optional category for organizing contacts"
     )
+    
+    # Metadata
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
     class Meta:
-        ordering = ['name']
+        ordering = ['last_name', 'first_name']
         verbose_name = "Contact"
         verbose_name_plural = "Contacts"
     
     def __str__(self):
-        return f"{self.name} ({self.user.username})"
+        full_name = f"{self.first_name} {self.last_name}".strip()
+        if self.alias:
+            return f"{full_name} ({self.alias}) - {self.user.username}"
+        return f"{full_name} - {self.user.username}"
+    
+    @property
+    def full_name(self):
+        """Return the full name of the contact."""
+        return f"{self.first_name} {self.last_name}".strip()
     
     def save(self, *args, **kwargs):
-        logger.debug(f"Saving contact {self.name} for user: {self.user.username if self.user else 'Unknown'}")
+        logger.debug(f"Saving contact {self.full_name} for user: {self.user.username if self.user else 'Unknown'}")
         super().save(*args, **kwargs) 

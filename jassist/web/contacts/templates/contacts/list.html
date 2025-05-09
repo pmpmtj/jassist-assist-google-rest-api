@@ -53,7 +53,12 @@
                     <div class="card shadow-sm h-100">
                         <div class="card-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <h5 class="card-title mb-0">{{ contact.name }}</h5>
+                                <h5 class="card-title mb-0">
+                                    {{ contact.first_name }} {{ contact.last_name }}
+                                    {% if contact.alias %}
+                                        <small class="text-muted">({{ contact.alias }})</small>
+                                    {% endif %}
+                                </h5>
                                 {% if contact.category %}
                                     <span class="badge bg-info">{{ contact.category }}</span>
                                 {% endif %}
@@ -64,6 +69,17 @@
                                 {% endif %}
                                 {% if contact.phone %}
                                     <p class="mb-1"><i class="bi bi-telephone me-2"></i>{{ contact.phone }}</p>
+                                {% endif %}
+                                {% if contact.private_phone or contact.professional_phone %}
+                                    <p class="mb-1 small text-muted">
+                                        {% if contact.private_phone %}
+                                            <i class="bi bi-phone me-1"></i>Private: {{ contact.private_phone }}
+                                        {% endif %}
+                                        {% if contact.private_phone and contact.professional_phone %} | {% endif %}
+                                        {% if contact.professional_phone %}
+                                            <i class="bi bi-building me-1"></i>Work: {{ contact.professional_phone }}
+                                        {% endif %}
+                                    </p>
                                 {% endif %}
                             </div>
                         </div>

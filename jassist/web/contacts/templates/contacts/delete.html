@@ -25,13 +25,18 @@
                 <div class="card-body">
                     <p class="alert alert-warning">
                         <i class="bi bi-exclamation-triangle-fill me-2"></i>
-                        Are you sure you want to delete the contact <strong>{{ contact.name }}</strong>? 
+                        Are you sure you want to delete the contact <strong>{{ contact.first_name }} {{ contact.last_name }}{% if contact.alias %} ({{ contact.alias }}){% endif %}</strong>? 
                         This action cannot be undone.
                     </p>
                     
                     <div class="card mb-3">
                         <div class="card-body">
-                            <h5 class="card-title">{{ contact.name }}</h5>
+                            <h5 class="card-title">
+                                {{ contact.first_name }} {{ contact.last_name }}
+                                {% if contact.alias %}
+                                    <small class="text-muted">({{ contact.alias }})</small>
+                                {% endif %}
+                            </h5>
                             {% if contact.email %}
                                 <p class="mb-1"><i class="bi bi-envelope me-2"></i>{{ contact.email }}</p>
                             {% endif %}
