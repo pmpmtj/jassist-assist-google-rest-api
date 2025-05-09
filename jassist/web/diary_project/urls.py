@@ -25,6 +25,8 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')), 
     # Include Drive download URLs with the namespace 'gdrive'
     path('drive/', include('jassist.web.download_gdrive.urls', namespace='download_gdrive')),
+    # Manual entries URLs
+    path('entries/', include('jassist.web.manual_entries.urls', namespace='manual_entries')),
     # API endpoints
     path('api/', include('jassist.web.api.urls')),
     # Include your jassist_app URLs, making them the default for the site

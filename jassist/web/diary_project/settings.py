@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'jassist.web.download_gdrive',
     'jassist.web.api',
     'jassist.web.classification',
+    'jassist.web.manual_entries',
 ]
 
 SITE_ID = 2
